@@ -1,0 +1,130 @@
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 style="margin:7px 0 0 0" class="card-title">
+                                Predictions
+                            </h4>
+                        </div>
+                        <div class="col-md-2 ml-md-auto">
+                            <button style="margin-top:7px" (click)="showDialog()" type="button" class="btn btn-block btn-primary btn-sm">Add New</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <p-dataTable [paginator]="true" [rows]="9" [value]="predictions" selectionMode="single">
+                        <p-column field="homeTeam" header="Home Team" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="awayTeam" header="Away Team" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="homeScore" header="Home Score" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="awayScore" header="Away Score" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="realDate" header="Date" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="kickOff" header="Time" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column field="tip" header="Tip" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+                        <p-column [style]="{'width':'60px'}">
+                            <ng-template pTemplate="header">
+                            </ng-template>
+                            <ng-template let-staff="rowData" let-i="rowIndex" pTemplate="body">
+                                <a style="cursor:pointer" (click)="editPrediction(i)">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [responsive]=true [(visible)]="display" modal="modal" showEffect="fade" width="800">
+    <div style="margin-bottom:0" class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                Add New Prediction
+            </h5>
+        </div>
+
+        <div class="card-block">
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="leagueName">League Name</label>
+                <div class="col-md-4">
+                    <select name="leagueName" id="leagueName" [(ngModel)]="data.leagueName" class="form-control">
+                        <option *ngFor="let item of leagueArray" [value]="item.name">
+                            {{item.name}}
+                        </option>
+                    </select>
+                </div>
+
+                <label class="col-md-2 col-form-label" for="date">Date</label>
+                <div class="col-md-4">
+                    <p-calendar [(ngModel)]="data.date" [style]="{'width': '257px', 'position': 'fixed', 'overflow': 'visible', 'z-index': '999'}"
+                        [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2030" dateFormat="dd/mm/yy"></p-calendar>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="homeTeam">Home Team</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" [(ngModel)]="data.homeTeam" id="homeTeam">
+                </div>
+                <label class="col-md-2 col-form-label" for="awayTeam">Away Team</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" [(ngModel)]="data.awayTeam" id="awayTeam">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="homeScore">Home Score</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="homeScore" [(ngModel)]="data.homeScore">
+                </div>
+                <label class="col-md-2 col-form-label" for="awayScore">Away Score</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="awayScore" [(ngModel)]="data.awayScore">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="tip">Tip</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="tip" [(ngModel)]="data.tip">
+                </div>
+
+                <label class="col-md-2 col-form-label" for="kickOffTime">Kickoff Time</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="kickOffTime" [(ngModel)]="data.kickOffTime" placeholder="Eg 12:45">
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <label class="col-md-2 col-form-label" for="status">Status</label>
+                <div class="col-md-4">
+                    <select name="status" id="status" class="form-control" [(ngModel)]="data.status">
+                        <option value="pending">Pending</option>
+                        <option value="won">Won</option>
+                        <option value="lost">Lost</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-9"></div>
+                <div style="margin:10px 0 0 0;padding-right:1.25rem" class="col-md-3">
+                    <div style="float:right" class="btn-group" role="group" aria-label="modal-Button">
+                        <button (click)="display=false" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="button" [disabled]="!data.status || !data.leagueName || !data.date || !data.homeTeam || !data.awayTeam || !data.homeScore || !data.awayScore || !data.tip || !data.kickOffTime"
+                            (click)="savePrediction()" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</p-dialog>
+
+
